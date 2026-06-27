@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\KEVIN\\\\Desktop\\\\frontend neythan\\\\ayni\\\\src\\\\pages\\\\dashboards\")"
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\KEVIN\\\\Desktop\\\\frontend neythan\\\\ayni\\\\src\\\\pages\\\\dashboards\")",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -match \"vite\" -or $_.CommandLine -match \"vite\" } | Select-Object Id, ProcessName)"
     ]
   }
 }

@@ -1,19 +1,18 @@
 import { useAuth } from "../context/AuthContext";
 import { ROLES } from "../constants/roles";
 import AdminDashboard from "./dashboards/AdminDashboard";
-import CitizenDashboard from "./dashboards/CitizenDashboard";
-import VolunteerDashboard from "./dashboards/VolunteerDashboard";
+import UsuarioDashboard from "./dashboards/UsuarioDashboard";
+import EntidadDashboard from "./dashboards/EntidadDashboard";
 
 export default function DashboardPage() {
   const { user } = useAuth();
-
   if (!user) return null;
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto">
-      {user.role === ROLES.ADMIN && <AdminDashboard />}
-      {user.role === ROLES.CITIZEN && <CitizenDashboard />}
-      {user.role === ROLES.VOLUNTEER && <VolunteerDashboard />}
-    </div>
+    <>
+      {user.rol === ROLES.ADMIN    && <AdminDashboard />}
+      {user.rol === ROLES.USUARIO  && <UsuarioDashboard />}
+      {user.rol === ROLES.ENTIDAD  && <EntidadDashboard />}
+    </>
   );
 }

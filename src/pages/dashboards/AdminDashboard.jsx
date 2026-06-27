@@ -1,55 +1,94 @@
-import StatsCard from "../../components/ui/StatsCard";
-import CaseCard from "../../components/ui/CaseCard";
-import { STATS, MOCK_CASES } from "../../constants/mockData";
+import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { useReportes } from "../../hooks/useReportes";
+import ReporteCard from "../../components/ui/ReporteCard";
+import FilterChip from "../../components/ui/FilterChip";
+import Spinner from "../../components/ui/Spinner";
+import { ClipboardIcon, BellIcon, CheckCircleIcon, InboxIcon } from "../../components/ui/Icons";
+import { TIPO_REPORTE } from "../../constants/types";
+
+const FILTERS = [
+  { label: "Todos",          value: null },
+  { label: "Personas",       value: TIPO_REPORTE.PERSONA },
+  { label: "Animales",       value: TIPO_REPORTE.ANIMAL },
+  { label: "Accidentes",     value: TIPO_REPORTE.ACCIDENTE },
+  { label: "Vulnerabilidad", value: TIPO_REPORTE.VULNERABILIDAD },
+];
+
+function StatCard({ Icon, label, value, iconClass }) {
+  return (
+    <div className="bg-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm border border-cafe-100">
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${iconClass}`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <div>
+        <p className="text-xs text-cafe-500">{label}</p>
+        <p className="text-xl font-bold text-cafe-900">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
-  const stats = STATS.admin;
-  const recentCases = MOCK_CASES.slice(0, 4);
+  const { search = "" } = useOutletContext() ?? {};
+  const [tipo, setTipo] = useState(null);
+  const { data, total, loading, error } = useReportes({ tipo });
+
+  const activos     = data.filter((r) => r.estado_resolucion === "activo").length;
+  const encontrados = data.filter((r) => r.estado_resolucion === "encontrado").length;
+
+  const filtered = data.filter((r) =>
+    search === "" ||
+    r.titulo?.toLowerCase().includes(search.toLowerCase()) ||
+    r.nombre_desaparecido?.toLowerCase().includes(search.toLowerCase()) ||
+    r.ultima_ubicacion?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-6 space-y-5 max-w-7xl mx-auto">
+      {/* Stats */}
+      <div className="flex flex-wrap gap-3">
+        <StatCard Icon={ClipboardIcon} label="Total reportes" value={total}      iconClass="bg-cafe-100 text-cafe-700" />
+        <StatCard Icon={BellIcon}      label="Activos"         value={activos}    iconClass="bg-amber-50 text-amber-600" />
+        <StatCard Icon={CheckCircleIcon} label="Encontrados"  value={encontrados} iconClass="bg-emerald-50 text-emerald-600" />
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {FILTERS.map((f) => (
+          <FilterChip key={f.label} label={f.label} active={tipo === f.value} onClick={() => setTipo(f.value)} />
+        ))}
+      </div>
+
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Panel de Administración</h2>
-        <p className="text-gray-500 text-sm mt-1">Resumen general de la plataforma</p>
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold text-cafe-900">
+          {tipo ? FILTERS.find((f) => f.value === tipo)?.label : "Todos los reportes"}
+        </h2>
+        {!loading && <span className="text-xs text-cafe-400">{filtered.length} resultados</span>}
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatsCard label="Casos totales" value={stats.totalCases} icon="📋" color="blue" />
-        <StatsCard label="Casos activos" value={stats.activeCases} icon="🔴" color="amber" />
-        <StatsCard label="Encontrados" value={stats.foundCases} icon="✅" color="emerald" />
-        <StatsCard label="Personas" value={stats.persons} icon="👤" color="blue" />
-        <StatsCard label="Mascotas" value={stats.pets} icon="🐾" color="purple" />
-        <StatsCard label="Voluntarios" value={stats.volunteers} icon="🙋" color="emerald" />
-      </div>
+      {/* Content */}
+      {loading && <div className="flex justify-center py-16"><Spinner size="lg" /></div>}
 
-      {/* Alert banner */}
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-        <span className="text-xl">⚠️</span>
-        <div>
-          <p className="font-semibold text-amber-800 text-sm">5 casos sin voluntario asignado</p>
-          <p className="text-amber-700 text-xs mt-0.5">
-            Revisa la lista de casos y asigna voluntarios disponibles.
+      {error && (
+        <div className="bg-red-50 border border-red-100 text-red-700 rounded-2xl p-4 text-sm">{error}</div>
+      )}
+
+      {!loading && !error && filtered.length === 0 && (
+        <div className="text-center py-16 bg-white rounded-2xl border border-cafe-100">
+          <InboxIcon className="w-12 h-12 text-cafe-200 mx-auto" />
+          <p className="text-cafe-500 mt-3 text-sm">
+            {search ? `Sin resultados para "${search}"` : "No hay reportes aún."}
           </p>
         </div>
-        <button className="ml-auto text-xs text-amber-700 font-medium hover:underline flex-shrink-0">
-          Ver →
-        </button>
-      </div>
+      )}
 
-      {/* Recent cases */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-gray-800">Casos recientes</h3>
-          <button className="text-sm text-blue-600 hover:underline">Ver todos</button>
+      {!loading && filtered.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filtered.map((r) => <ReporteCard key={r.id} reporte={r} />)}
         </div>
-        <div className="space-y-3">
-          {recentCases.map((c) => (
-            <CaseCard key={c.id} caseItem={c} />
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
