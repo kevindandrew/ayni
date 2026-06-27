@@ -20,7 +20,8 @@ export function useReportes({ tipo = null, estado_resolucion = null, page = 1 } 
       .list(params)
       .then((res) => {
         if (cancelled) return;
-        const payload = res.data;
+        // La API devuelve { success, data: { items, total } | [...], message }
+        const payload = res.data?.data ?? res.data;
         if (Array.isArray(payload)) {
           setData(payload);
           setTotal(payload.length);
