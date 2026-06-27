@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { SearchIcon, EyeIcon, EyeOffIcon } from "../components/ui/Icons";
 import Spinner from "../components/ui/Spinner";
@@ -145,12 +145,12 @@ export default function LoginPage() {
 
           <p className="text-center text-xs text-cafe-400 mt-6">
             ¿No tienes cuenta?{" "}
-            <button
-              type="button"
+            <Link
+              to="/registro"
               className="text-cafe-700 font-semibold hover:underline"
             >
               Regístrate
-            </button>
+            </Link>
           </p>
         </div>
       </div>

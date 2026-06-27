@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import AppLayout from "./components/layout/AppLayout";
 import ReportesPage from "./pages/ReportesPage";
 import PendientesPage from "./pages/PendientesPage";
+import ReporteDetailPage from "./pages/ReporteDetailPage";
 import UsuariosPage from "./pages/UsuariosPage";
 import EntidadesPage from "./pages/EntidadesPage";
 import RecompensasPage from "./pages/RecompensasPage";
@@ -23,12 +25,14 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/"         element={<LoginPage />} />
+          <Route path="/registro" element={<RegisterPage />} />
           <Route element={<AppLayout />}>
             <Route path="/dashboard"              element={<DashboardPage />} />
             <Route path="/reportes"               element={<ReportesPage />} />
             <Route path="/reportes/pendientes"    element={<PendientesPage />} />
             <Route path="/reportes/nuevo"         element={<NuevoReportePage />} />
+            <Route path="/reportes/:id"           element={<ReporteDetailPage />} />
             <Route path="/usuarios"               element={<UsuariosPage />} />
             <Route path="/entidades"              element={<EntidadesPage />} />
             <Route path="/recompensas"            element={<RecompensasPage />} />

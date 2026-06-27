@@ -9,6 +9,10 @@ const cfg = {
   encontrado:  { cls: "bg-emerald-100 text-emerald-800", label: "Encontrado" },
   atendido:    { cls: "bg-sky-100 text-sky-800", label: "Atendido" },
   cerrado:     { cls: "bg-gray-100 text-gray-600", label: "Cerrado" },
+  // estados validación
+  pendiente:  { cls: "bg-amber-100 text-amber-800", label: "Pendiente" },
+  aceptado:   { cls: "bg-emerald-100 text-emerald-800", label: "Validado" },
+  rechazado:  { cls: "bg-red-100 text-red-800", label: "Rechazado" },
   // roles
   administrador: { cls: "bg-red-100 text-red-800", label: "Admin" },
   entidad:       { cls: "bg-teal-100 text-teal-800", label: "Entidad" },
